@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-library ISafeMath {
+library SafeMath {
   /**
     * @dev Returns the addition of two unsigned integers, reverting on
     * overflow.
@@ -144,7 +144,7 @@ library ISafeMath {
   }
 }
 
-interface IERC20V2 {
+interface ERC20 {
 
     function totalSupply() external view returns (uint256);
 
@@ -213,8 +213,8 @@ interface IERC20V2 {
     event Approval(address indexed owner, address indexed spender, uint256 value);
 }
 
-contract Strataly is IERC20V2 {
-  using ISafeMath for uint256;
+contract Strataly is ERC20 {
+  using SafeMath for uint256;
 
   mapping (address => uint256) private _rOwned; // amount of tokens owned in reflected space
   mapping (address => uint256) private _tOwned; // amount of token owned in token space
@@ -348,27 +348,6 @@ contract Strataly is IERC20V2 {
     _allowances[owner][spender] = amount;
     emit Approval(owner, spender, amount);
   }
-
-  function _burn(uint256 amount) internal {
-    require(_totalSupply > amount, "BEP20: burn from the zero address");
-
-    // _rOwned[account] = _rOwned[account].sub(amount, "BEP20: amount exceeds balance");
-    _totalSupply = _totalSupply.sub(amount);
-  }
-
-  function mint(uint256 amount) public returns (bool) {
-    _mint(msg.sender, amount);
-    return true;
-  }
-
-  function _mint(address account, uint256 amount) internal {
-    require(account != address(0), "BEP20: mint to the zero address");
-
-    _totalSupply = _totalSupply.add(amount);
-    _rOwned[account] = _rOwned[account].add(amount);
-    emit Transfer(address(0), account, amount);
-  }
-
 
   function name() public view returns (string memory) {
     return _name;
